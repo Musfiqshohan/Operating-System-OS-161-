@@ -40,6 +40,8 @@ int sys_fork(struct trapframe *tframe,int *retval)
 
 static int open_file_cnt=0;
 static int open(char *filename, int flags, int descriptor){
+
+	kprintf("\n***************Open43 SuccessFul**********************\n");
 	struct File *file = kmalloc(sizeof(struct open_file*));
 	int result;
 	if(!file){
@@ -66,74 +68,8 @@ static int open(char *filename, int flags, int descriptor){
 
 	return 0;
 }
-static int open2(struct proc *newproc,char *filename, int flags, int descriptor){
-	struct File *file = kmalloc(sizeof(struct File*));
-	int result;
-	if(!file){
-		return ENFILE;
-	}
- 
-	result = vfs_open(filename, flags, 0, &file->v_ptr);
-	if (result) {
-		kfree(file);
-		return result;
-	}
 
-	file->flock = lock_create("lock create");
-	if(!file->flock) {
-		vfs_close(file->v_ptr);
-		kfree(file);
-		return ENFILE;
-	}
 
-	file->offset = 0;
-	file->open_flags = flags;
-	file->references = 1;
-	newproc->descriptor_table[descriptor] = file;
-
-	return 0;
-}
-int filetable_init(struct proc *newproc)
-{
-	int result;
-	//kprintf("1\n");
-	if(newproc->descriptor_table[0]==NULL)
-	{
-		char temp1[]="dumb";
-		result=open2(newproc,temp1,O_RDONLY,0);
-		if(result) {
-			kprintf("fileatable_init failed\n");
-			kfree(temp1);
-			return EINVAL;
-		}	
-	}
-	//kprintf("2\n");
-	if(newproc->descriptor_table[1]==NULL)
-	{
-		char temp2[]="dumb";
-		result=open2(newproc,temp2,O_WRONLY,1);
-		if(result) {
-			kprintf("fileatable_init failed\n");
-			kfree(temp2);
-			return EINVAL;
-		}
-		
-	}
-	
-	//kprintf("1\n");
-	if(newproc->descriptor_table[2]==NULL)
-	{
-		char temp3[]="dumb";
-		result=open2(newproc,temp3,O_WRONLY,2);
-		if(result) {
-			kprintf("fileatable_init failed\n");
-			kfree(temp3);
-			return EINVAL;
-		}
-		
-	}
-	return 0;
-}
 
 int close(int filehandler, struct proc *proc) {
 	if(filehandler < 0 || filehandler >= MAX_PROCESS_OPEN_FILES || !proc->descriptor_table[filehandler]) {
@@ -218,7 +154,7 @@ int sys_read(int filehandler, userptr_t buf, size_t size, int *ret) {
 	struct uio myuio;
 	if(filehandler < 0 || filehandler >= MAX_PROCESS_OPEN_FILES || !curproc->descriptor_table[filehandler]) {
 		return EBADF;
-	}
+	}	
 	struct File *file = curproc->descriptor_table[filehandler];
 
 	int how = file->open_flags & O_ACCMODE;
