@@ -1,0 +1,33 @@
+Submitted by:
+------------
+Name: Md. Musfiqur Rahman
+ROll: 05
+
+
+Makefile usage:
+---------------
+make run: creates the .class file and executes the AlgorithmSimulator.java file to show the output.
+make clean: removes the .class files
+
+
+This assignment implements three CPU schedule algorithms
+1) FCFS
+	a)FCFS.java (FCFS implemented)
+	b)FirstCome.java (Comparator function)
+	c)ProcessFCFS.java (Process class)
+2) SJF (Shortest job first)
+	a)ShortestJob.java (Comparator function)
+	b)SJF.java   (SJF implemented)
+3) Round-Robin Scheduling
+	a)RoundRobin.java  (RoundRobin implemented)
+	b)ProcessRobin.java  (Process class)
+	c)RoundRobinComp.java  (Comparator function)
+
+
+AlgorithmSimulator.java:
+This file is the simulator for running all the algorithms at once.Mainly we have to run this file.
+
+
+input file: input.txt
+
+
